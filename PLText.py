@@ -1,5 +1,4 @@
 import curses
-import re
 import constants as cn
 
 class curses_screen:
@@ -16,22 +15,16 @@ class curses_screen:
         curses.endwin()
 
 def startup():
-	stdscr.addstr('----- Playing as ' + cn.active_character.name + ' -----\n')
+	stdscr.addstr('Welcome to Pilot Light\n')
 	stdscr.refresh()
 
 def act(command):
-	command = re.sub(' ', '_', command)
-	if command in cn.commands:
-		stdscr.addstr(eval('cn.' + command + '(cn.active_character.name)'))
-	else:
-		stdscr.addstr(eval('cn.' + cn.commands[0] + '(cn.active_character.name)'))
-	stdscr.refresh()
+	cn.act(command, stdscr)
 
 with curses_screen() as stdscr:
 	stdscr.refresh()
 	startup()
-	while True:
+	while True:	
 		stdscr.addstr('>>> ')
 		stdscr.refresh()
 		act(stdscr.getstr())
-		stdscr.addstr('\n')
