@@ -1,10 +1,65 @@
 import curses
-import constants as cn
+import re
 
 #Classes to be defined include Script, MissionCalc
 
 #Define a scriptreader, which creates events based on a 
 #scriptreader
+
+class Character:
+    def __enter__(self):
+        screen = curses.initscr()
+        curses.cbreak()
+        screen.keypad(1)
+        SCREEN_HEIGHT, SCREEN_WIDTH = screen.getmaxyx()
+        return screen
+
+    def __exit__(self,a,b,c):
+        curses.nocbreak()
+        screen.keypad(0)
+        curses.echo()
+        curses.endwin()
+
+    def __init__(self, data_file):
+        self.data_file = data_file
+        try:
+            self.dat = __import__(data_file, globals(), locals(), ['*'])
+        except ImportError:
+            pass #Create a new randomly generated character file
+
+    def act(self, cmd, args=[]):
+        if len(args) == 0:
+            self.dat.commands[cmd][1]()
+        else:
+            self.dat.commands[cmd][1](args)
+
+    def interpret(self, first, rest=[]):
+        if first in self.dat.commands:
+            act(first, rest)
+        else:
+            if len(rest) == 0:
+                if len(first) != 0:
+                    #act(stdcmd.error)
+                    screen.addstr('%s shakes his head sadly\n' % self.dat.name)
+                    screen.refresh()
+            if len(rest) > 1:
+                self.interpret(first + rest[0], rest[1::])
+
+    def parse(self, in_cmd):
+        in_cmd = '[' + re.sub('[ ]', ', ', ''.join(map(chr, in_cmd))) + ']'
+        cmd = []
+        eval(cmd + ' = ' + repr(in_cmd))
+        cmd = cmd[0]
+
+        if len(cmd) == 1:
+            self.interpret(cmd[0])
+        if len(cmd) > 1:
+            self.interpret(cmd[0], cmd[1::])
+
+
+    def prompt(self):
+        screen.addstr('>>> ')
+        screen.refresh()
 
 
 class ClockTower:
@@ -16,58 +71,6 @@ class ClockTower:
     ClockTower only returns time.
 
     """
-
-class Command:
-    def __init__(self, new_cmd, target_fn, docstr=''):
-        self.new_cmd = new_cmd
-        self.target_fn = target_fn
-
-class CursesScreen:
-    def __enter__(self):
-        stdscr = curses.initscr()
-        curses.cbreak()
-        stdscr.keypad(1)
-        SCREEN_HEIGHT, SCREEN_WIDTH = stdscr.getmaxyx()
-        return stdscr
-    def __exit__(self,a,b,c):
-        curses.nocbreak()
-        stdscr.keypad(0)
-        curses.echo()
-        curses.endwin()
-
-class Character:
-    """Every entity has a character class. Pilot Light
-    characters spawn the main terminal window, where the
-    player interacts with the world.
-
-    Character has many variables:
-    -   Name
-    -   Stats
-    -   Items
-    -   Location
-
-    Characters can:
-    -   Listen (and remember)
-    -   Act
-    -   Die
-
-    Pilot Light characters have a special item:
-    -   Phone
-    """
-    def __init__(self, data_file): #Other shit comes later
-        import_statement = 'import ' + data_file
-        exec('import_statement')
-        #print(eval(data_file + '.name'))
-        #begin()
-
-    def begin(self):
-        with CursesScreen() as stdscr:
-            stdscr.refresh()
-            startup()
-            while True: 
-                stdscr.addstr('>>> ')
-                stdscr.refresh()
-                act(stdscr.getstr())
 
 class Location:
     """Each notable location has a time zone shift, a map,
@@ -81,16 +84,6 @@ class Location:
     -   description
     -   zone_difference
     """
-    def __init__(self, items): #other shit later
-        self.items = items
-    
-    def survey(self):
-        list_items = ''
-        for i in range(0, len(self.items)):
-            if i > 0:
-                list_items += ", "
-            list_items += self.items[i]
-        return('Items: ' + list_items)
 
 class Phone:
     """Phone is one of the most useful and important 
