@@ -1,3 +1,6 @@
+import curses
+import constants as cn
+
 #Classes to be defined include Script, MissionCalc
 
 #Define a scriptreader, which creates events based on a 
@@ -13,6 +16,24 @@ class ClockTower:
     ClockTower only returns time.
 
     """
+
+class Command:
+    def __init__(self, new_cmd, target_fn, docstr=''):
+        self.new_cmd = new_cmd
+        self.target_fn = target_fn
+
+class CursesScreen:
+    def __enter__(self):
+        stdscr = curses.initscr()
+        curses.cbreak()
+        stdscr.keypad(1)
+        SCREEN_HEIGHT, SCREEN_WIDTH = stdscr.getmaxyx()
+        return stdscr
+    def __exit__(self,a,b,c):
+        curses.nocbreak()
+        stdscr.keypad(0)
+        curses.echo()
+        curses.endwin()
 
 class Character:
     """Every entity has a character class. Pilot Light
@@ -33,16 +54,20 @@ class Character:
     Pilot Light characters have a special item:
     -   Phone
     """
-    def __init__(self, name, gender, location): #Other shit comes later
-        self.name = name
-        self.gender = gender
-        if gender == 'male':
-            self.ppronoun = 'his'
-            self.pronoun = 'he'
-        else:
-            self.ppronoun = 'her'
-            self.pronoun = 'she'
-        self.location = location
+    def __init__(self, data_file): #Other shit comes later
+        import_statement = 'import ' + data_file
+        exec('import_statement')
+        #print(eval(data_file + '.name'))
+        #begin()
+
+    def begin(self):
+        with CursesScreen() as stdscr:
+            stdscr.refresh()
+            startup()
+            while True: 
+                stdscr.addstr('>>> ')
+                stdscr.refresh()
+                act(stdscr.getstr())
 
 class Location:
     """Each notable location has a time zone shift, a map,

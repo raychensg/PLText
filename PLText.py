@@ -1,30 +1,40 @@
 import curses
-import constants as cn
 
-class curses_screen:
+class Character:
     def __enter__(self):
-        stdscr = curses.initscr()
+        screen = curses.initscr()
         curses.cbreak()
-        stdscr.keypad(1)
-        SCREEN_HEIGHT, SCREEN_WIDTH = stdscr.getmaxyx()
-        return stdscr
+        screen.keypad(1)
+        SCREEN_HEIGHT, SCREEN_WIDTH = screen.getmaxyx()
+        return screen
+
     def __exit__(self,a,b,c):
         curses.nocbreak()
-        stdscr.keypad(0)
+        screen.keypad(0)
         curses.echo()
         curses.endwin()
 
-def startup():
-	stdscr.addstr('Welcome to Pilot Light\n')
-	stdscr.refresh()
+    def __init__(self, data_file):
+        self.data_file = data_file
+        try:
+    	    self.dat = __import__(data_file, globals(), locals(), ['*'])
+        except ImportError:
+            pass #Create a new randomly generated character file
 
-def act(command):
-	cn.act(command, stdscr)
+    def act(self, cmd):
+        pass
 
-with curses_screen() as stdscr:
-	stdscr.refresh()
-	startup()
-	while True:	
-		stdscr.addstr('>>> ')
-		stdscr.refresh()
-		act(stdscr.getstr())
+    def prompt(self):
+        screen.addstr('>>> ')
+
+
+characters = []
+
+characters.append(Character('character_files.ray'))
+
+with characters[0] as screen:
+    characters[0].prompt()
+    characters[0].act(screen.getstr)
+    screen.refresh()
+    screen.getch()
+    exit()
