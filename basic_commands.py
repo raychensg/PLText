@@ -1,8 +1,3 @@
-#Commands are defined here
-def error():
-	screen.addstr('%s thumps %s chest defiantly\n' % (active_character.name, active_character.ppronoun))
-commands.append(Command('error', error, 'The default error message for nonexistant commands'))
-
 def help():
 	str_commands = 'Specific instructions available by using help <command>\n'
 	for s in commands:

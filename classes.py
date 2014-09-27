@@ -28,28 +28,23 @@ class Character:
             pass #Create a new randomly generated character file
 
     def act(self, cmd, args=[]):
-        if len(args) == 0:
-            self.dat.commands[cmd][1]()
-        else:
-            self.dat.commands[cmd][1](args)
+        eval(repr(self.dat.commands[cmd](screen, args)))
 
     def interpret(self, first, rest=[]):
         if first in self.dat.commands:
-            act(first, rest)
+            self.act(first, rest)
         else:
             if len(rest) == 0:
                 if len(first) != 0:
-                    #act(stdcmd.error)
-                    screen.addstr('%s shakes his head sadly\n' % self.dat.name)
-                    screen.refresh()
-            if len(rest) > 1:
-                self.interpret(first + rest[0], rest[1::])
+                    self.act('error')
+            if len(rest) >= 1:
+                self.interpret(first + ' ' +  rest[0], rest[1::])
 
     def parse(self, in_cmd):
-        in_cmd = '[' + re.sub('[ ]', ', ', ''.join(map(chr, in_cmd))) + ']'
         cmd = []
-        eval(cmd + ' = ' + repr(in_cmd))
-        cmd = cmd[0]
+        in_cmd = re.sub('[ ]', '\', \'', ''.join(map(chr, in_cmd)))
+        in_cmd = '[\'%s\']' % in_cmd
+        cmd = eval(in_cmd)
 
         if len(cmd) == 1:
             self.interpret(cmd[0])
