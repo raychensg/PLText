@@ -22,8 +22,11 @@ class Character:
 
     def __init__(self, data_file):
         self.data_file = data_file
+        self.load_info()
+
+    def load_info(self):
         try:
-            self.dat = __import__(data_file, globals(), locals(), ['*'])
+            self.dat = __import__(self.data_file, globals(), locals(), ['*'])
         except ImportError:
             pass #Create a new randomly generated character file
 
@@ -41,9 +44,7 @@ class Character:
                 self.interpret(first + ' ' +  rest[0], rest[1::])
 
     def parse(self, in_cmd):
-        cmd = []
-        in_cmd = re.sub('[ ]', '\', \'', ''.join(map(chr, in_cmd)))
-        in_cmd = '[\'%s\']' % in_cmd
+        in_cmd = '[\'%s\']' % re.sub('[ ]', '\', \'', ''.join(map(chr, in_cmd)))
         cmd = eval(in_cmd)
 
         if len(cmd) == 1:
