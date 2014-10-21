@@ -1,11 +1,11 @@
 import time
 
+commands = {}
+
 name = 'Ray'
 gender = 'Male'
 location = 'Slottman 212'
 alive = True
-
-commands = {}
 
 def make_cmd(fn, name=None):
 	if name == None:
@@ -32,6 +32,7 @@ def error(screen, args=[]):
 def quit(screen, args=[]):
 	if screen == 'name':
 		return 'quit'
+	save_data()
 	exit()
 
 @make_cmd
@@ -53,7 +54,7 @@ def bind(screen, args=[]):
 			else:
 				target_cmd += ' ' + c
 		if target_cmd in commands:
-			commands.update({new_cmd:commands[target_cmd]})
+			make_cmd(commands[target_cmd], new_cmd)
 		else:
 			slow_show(screen, [target_cmd], 0.01)
 	else:

@@ -44,14 +44,11 @@ class Character:
                 self.interpret(first + ' ' +  rest[0], rest[1::])
 
     def parse(self, in_cmd):
-        in_cmd = '[\'%s\']' % re.sub('[ ]', '\', \'', ''.join(map(chr, in_cmd)))
-        cmd = eval(in_cmd)
-
+        cmd = ''.join(map(chr, in_cmd)).split()
         if len(cmd) == 1:
             self.interpret(cmd[0])
         if len(cmd) > 1:
             self.interpret(cmd[0], cmd[1::])
-
 
     def prompt(self):
         screen.addstr('>>> ')
