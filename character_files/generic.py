@@ -1,11 +1,5 @@
 import time
-
 commands = {}
-
-name = 'Ray'
-gender = 'Male'
-location = 'Slottman 212'
-alive = True
 
 @make_cmd
 def error(screen, args=[]):
@@ -43,15 +37,3 @@ def bind(screen, args=[]):
 			slow_show(screen, [target_cmd], 0.01)
 	else:
 		slow_show(screen, ['No target specified'], 0.01)
-
-###CUSTOM FUNCTIONS
-
-@make_cmd
-def wake_up(screen, args=[]):
-	if screen == 'name':
-		return 'wake up'
-	slow_show(screen, ['Ugh', '...', name + ' slowly sits up and rubs his eyes'])
-
-
-
-
